@@ -22,7 +22,7 @@ const NotebookLogin: React.FC = () => {
     setLoginMsg('');
 
     try {
-      const response = await fetch('https://journal.lemmons.my/api/login', {
+      const response = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -53,7 +53,7 @@ const NotebookLogin: React.FC = () => {
     setSignupMsg('');
 
     try {
-      const response = await fetch('https://journal.lemmons.my/api/register', {
+      const response = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

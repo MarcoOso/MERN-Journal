@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate }            from 'react-router-dom';
-import FullCalendar, { EventClickArg, EventInput } from '@fullcalendar/react';
+import FullCalendar from '@fullcalendar/react';
+import type { EventClickArg, EventInput } from '@fullcalendar/core';
 import dayGridPlugin             from '@fullcalendar/daygrid';
 import interactionPlugin         from '@fullcalendar/interaction';
 import './CalendarPage.css';

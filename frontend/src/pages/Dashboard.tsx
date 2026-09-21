@@ -30,9 +30,8 @@ const Dashboard: React.FC = () => {
   const [entryText, setEntryText] = useState('');
   const [tagInput, setTagInput]   = useState('');
   const [tags, setTags]           = useState<string[]>([]);
-  const [mood, setMood]           = useState('Default');
   const [message, setMessage]     = useState('');
-  const [entries, setEntries]     = useState<Entry[]>([]);
+  const [, setEntries]            = useState<Entry[]>([]);
   const prompts = [
     "What distractions get in the way of being your most productive?",
     "If someone described you, what would they say?",
@@ -91,27 +90,6 @@ const handleMoodSelection = (mood: string) => {
   const [sleepLevel, setSleepLevel] = useState(0);
   const [productivityLevel, setProductivityLevel] = useState(0);
   const [energyLevel, setEnergyLevel] = useState(0);
-
-  const handleBarClick = (bar: string, event: React.MouseEvent) => {
-    const barWidth = event.currentTarget.offsetWidth;
-    const clickPosition = event.nativeEvent.offsetX;
-    const newValue = Math.round((clickPosition / barWidth) * 10);
-
-    switch (bar) {
-      case 'stress':
-        setStressLevel(newValue);
-        break;
-      case 'sleep':
-        setSleepLevel(newValue);
-        break;
-      case 'productivity':
-        setProductivityLevel(newValue);
-        break;
-      case 'energy':
-        setEnergyLevel(newValue);
-        break;
-    }
-  };
 
   useEffect(() => {
     const stored = localStorage.getItem('user_data');
@@ -186,11 +164,11 @@ const handleSubmit = async (e: React.FormEvent) => {
 
 
   return (
-    <div className="dashboard" style={moodThemes[selectedMood] || moodThemes.Default}>
-      <header className="dashboard-header" style={moodThemes[selectedMood] || moodThemes.Default}>
+    <div className="dashboard" style={moodThemes[selectedMood ?? 'Default'] || moodThemes.Default}>
+      <header className="dashboard-header" style={moodThemes[selectedMood ?? 'Default'] || moodThemes.Default}>
         <h1>Welcome{user ? `, ${user.firstName}` : ''}!</h1>
       </header>
-     <main className="dashboard-main" style={moodThemes[selectedMood] || moodThemes.Default}>
+     <main className="dashboard-main" style={moodThemes[selectedMood ?? 'Default'] || moodThemes.Default}>
         <section className="new-entry">
           <form className="entry-form" onSubmit={handleSubmit}>
             <textarea
@@ -199,7 +177,7 @@ const handleSubmit = async (e: React.FormEvent) => {
               onChange={e => setEntryText(e.target.value)}
             />
 
-            <div className="tag-input" style={moodThemes[selectedMood] || moodThemes.Default}>
+            <div className="tag-input" style={moodThemes[selectedMood ?? 'Default'] || moodThemes.Default}>
               <input
                 type="text"
                 placeholder="Add a tag"
@@ -209,12 +187,12 @@ const handleSubmit = async (e: React.FormEvent) => {
                            <button
                       type="button"
                       onClick={addTag}
-                      style={moodThemes[selectedMood] || moodThemes.Default}>
+                      style={moodThemes[selectedMood ?? 'Default'] || moodThemes.Default}>
           Add Tag
          </button>
             </div>
 
-            <div className="tag-list" style={moodThemes[selectedMood] || moodThemes.Default}>
+            <div className="tag-list" style={moodThemes[selectedMood ?? 'Default'] || moodThemes.Default}>
               {tags.map(tag => (
                 <span key={tag} className="tag">{tag}</span>
               ))}
@@ -223,7 +201,7 @@ const handleSubmit = async (e: React.FormEvent) => {
             <button
   type="submit"
   className="save-button"
-  style={moodThemes[selectedMood] || moodThemes.Default}
+  style={moodThemes[selectedMood ?? 'Default'] || moodThemes.Default}
 >
   Save Entry
           </button>

@@ -1,12 +1,18 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
 const app = express();
 
 const multer = require('multer');
 const { GridFSBucket, ObjectId } = require('mongodb');
 const MongoClient = require('mongodb').MongoClient;
-const url = 'mongodb+srv://REDACTED_USER:REDACTED_PASSWORD@REDACTED_CLUSTER.mongodb.net/Journal?retryWrites=true&w=majority&appName=journal-app';
+
+const url = process.env.MONGO_URI;
+if (!url) {
+    throw new Error('MONGO_URI environment variable is not set. See .env.example.');
+}
 const client = new MongoClient(url);
 client.connect();
 
@@ -36,14 +42,14 @@ app.post('/api/login', async (req, res, next) => {
     const { login, password } = req.body;
 
     const db = client.db();
-    const results = await db.collection('Users').find({ Login: login, Password: password }).toArray();
+    const results = await db.collection('Users').find({ Login: login }).toArray();
 
 
     var id = -1;
     var fn = '';
     var ln = '';
 
-    if (results.length > 0) {
+    if (results.length > 0 && await bcrypt.compare(password, results[0].Password)) {
         id = results[0].UserId;
         fn = results[0].FirstName;
         ln = results[0].LastName;
@@ -93,13 +99,14 @@ app.post('/api/register', async(req, res, next) => {
         }
 
         //create new user
+        const passwordHash = await bcrypt.hash(password, 10);
         const newUser =
         {
             UserId: newUserId,
             FirstName: firstName,
             LastName: lastName,
             Login: username,
-            Password: password
+            Password: passwordHash
         }
 
         //insert new user into mongo
@@ -310,10 +317,10 @@ app.post('/api/updateEntry', upload.array('images', 3), async (req, res, next) =
     }
 });
 
-app.get('/api/retreiveEntries', async (req, res, next) => {
+app.post('/api/getEntries', async (req, res, next) => {
     try {
       const db = client.db();
-      const userId = Number(req.query.userId);
+      const userId = Number(req.body?.user?.UserId);
       const entries = await db.collection('Entries').find({ UserId: userId }).toArray();
       return res.status(200).json({ entries, error: '' });
     } catch (e) {
